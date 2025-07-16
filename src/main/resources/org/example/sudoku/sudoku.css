@@ -1,0 +1,32 @@
+/* Style for overall GridPane */
+GridPane {
+    -fx-background-color: white;
+    -fx-padding: 10;
+    -fx-hgap: 0;
+    -fx-vgap: 0;
+}
+
+/* Default style for all Sudoku cells */
+TextField {
+    -fx-border-color: #0000;
+    -fx-border-width: 1;
+    -fx-alignment: center;
+    -fx-font-size: 16px;
+}
+
+/* Thicker right border for cells at the right edge of 3x3 blocks (columns 2, 5) */
+.right-border {
+    -fx-border-color: #0000 #000000 #0000 #0000; /* Thicker black right border */
+    -fx-border-width: 1 3 1 1;
+}
+
+/* Thicker bottom border for cells at the bottom edge of 3x3 blocks (rows 2, 5) */
+.bottom-border {
+    -fx-border-color: #0000 #0000 #000000 #0000; /* Thicker black bottom border */
+    -fx-border-width: 1 1 3 1;
+}
+
+.right-bottom-border {
+    -fx-border-color: #0000 #000000 #000000 #0000; /* Thicker black bottom border */
+    -fx-border-width: 1 3 3 1;
+}
