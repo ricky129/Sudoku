@@ -13,8 +13,18 @@ public class SudokuController {
     private GridPane sudokuGrid;
     @FXML
     private Label label;
-
     private TextField[][] cells = new TextField[9][9];
+    private static int RandomNumbersAmount;
+    private boolean randomInput = false;
+    private int wrongMove = 0;
+    private SudokuApplication mainApp;
+
+    public SudokuController(SudokuApplication mainApp) {
+        this.mainApp = mainApp;
+    }
+
+    public SudokuController() {
+    }
 
     private Node getNodeByRowColumnIndex(final int row, final int col, GridPane gridPane) {
         Node result = null;
@@ -130,12 +140,13 @@ public class SudokuController {
         return true;
     }
 
-    private void fillRandom(int amount) {
+    private void fillRandom() {
+        randomInput = true; // avoid changin the correct or wrong flag when the numbers are not input by the user
 
         Random random = new Random();
 
         int cellsFilled = 0;
-        while (cellsFilled < amount) {
+        while (cellsFilled < RandomNumbersAmount) {
             int r = random.nextInt(9);
             int c = random.nextInt(9);
 
@@ -144,10 +155,12 @@ public class SudokuController {
             if (cells[r][c].getText().isEmpty() && isBlockCorrect(r, c, randomValue) && isRowColCorrect(r, c, randomValue)) {
                 // If the TextField is empty AND the randomValue is valid, then proceed
                 cells[r][c].setText(String.valueOf(randomValue)); // Set the text of the TextField
+                cells[r][c].setEditable(false);
                 cellsFilled++;
             }
-
         }
+
+        randomInput = false;
     }
 
     @FXML
@@ -164,21 +177,38 @@ public class SudokuController {
                     System.out.println("Cell [" + finalRow + "][" + finalCol + "] changed from " + oldValue + " to " + newValue);
 
                     if (newValue.matches("[1-9]")) {
+
                         int inputValue = Integer.parseInt(newValue);
                         boolean isBlockCorrectBoolean = isBlockCorrect(finalRow, finalCol, inputValue);
                         System.out.println("isBlockCorrect: " + isBlockCorrectBoolean);
                         boolean isRowColCorrectBoolean = isRowColCorrect(finalRow, finalCol, inputValue);
                         System.out.println("isRowColCorrect " + isRowColCorrectBoolean);
-                        if (isBlockCorrectBoolean && isRowColCorrectBoolean) label.setText("Corretto!");
-                        else label.setText("Sbagliato!");
-                    } else if (newValue.isEmpty()) {
+
+                        if (!randomInput) {
+                            if (isBlockCorrectBoolean && isRowColCorrectBoolean)
+                                label.setText("Correct!");
+                            else {
+                                label.setText("Wrong!");
+                                wrongMove++;
+                            }
+                        }
+                    } else if (newValue.isEmpty())
                         System.out.println("Cell cleared.");
-                    } else {
+                    else {
                         cell.setText(oldValue);
                         System.out.println("Invalid input. Please enter a single digit from 1-9.");
                     }
                 });
             }
-        fillRandom(10);
+        fillRandom();
+    }
+
+    @FXML
+    private void goToIndexButton() {
+
+    }
+
+    public void setRandomNumbersAmount(int randomNumbersAmount) {
+        this.RandomNumbersAmount = randomNumbersAmount;
     }
 }

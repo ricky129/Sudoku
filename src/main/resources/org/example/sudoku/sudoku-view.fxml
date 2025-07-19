@@ -131,7 +131,7 @@
    <AnchorPane VBox.vgrow="ALWAYS">
       <children>
          <Label fx:id="label" alignment="CENTER" layoutX="286.0" layoutY="13.0" text="Label" AnchorPane.bottomAnchor="12.666666666666668" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="13.0" />
-          <Button layoutY="17.333343505859375" mnemonicParsing="false" text="Button" />
+          <Button layoutY="17.333343505859375" mnemonicParsing="false" onMousePressed="#goToIndexButton" text="Button" />
       </children>
    </AnchorPane>
 </VBox>
