@@ -79,6 +79,7 @@ public class SudokuApplication extends Application {
 
             SudokuController sudokuController = fxmlLoader.getController();
             if (sudokuController != null) {
+                sudokuController.setMainApp(this);
                 sudokuController.setRandomNumbersAmount(randomNumbersAmount);
                 sudokuController.initialize();
             } else

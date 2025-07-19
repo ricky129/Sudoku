@@ -130,8 +130,9 @@
     </GridPane>
    <AnchorPane VBox.vgrow="ALWAYS">
       <children>
-         <Label fx:id="label" alignment="CENTER" layoutX="286.0" layoutY="13.0" text="Label" AnchorPane.bottomAnchor="12.666666666666668" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="13.0" />
-          <Button layoutY="17.333343505859375" mnemonicParsing="false" onMousePressed="#goToIndexButton" text="Button" />
+         <Label fx:id="CorrectFalse" alignment="CENTER" layoutY="13.0" text="CorrectWrong" AnchorPane.bottomAnchor="14.333333333333332" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="13.0" />
+         <Label fx:id="wrongMovesLabel" alignment="CENTER" layoutX="500.0" prefHeight="43.333333333333336" text="wrongMoves" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+          <Button layoutY="17.333343505859375" mnemonicParsing="false" onMousePressed="#goToIndexButton" text="Menu" />
       </children>
    </AnchorPane>
 </VBox>

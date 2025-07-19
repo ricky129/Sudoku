@@ -4,20 +4,28 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SudokuController {
     @FXML
     private GridPane sudokuGrid;
     @FXML
-    private Label label;
+    private Label CorrectFalse;
+    @FXML
+    private Label wrongMovesLabel;
     private TextField[][] cells = new TextField[9][9];
     private static int RandomNumbersAmount;
     private boolean randomInput = false;
-    private int wrongMove = 0;
+    private int wrongMovesCounter = -1;
     private SudokuApplication mainApp;
+    private static final Logger logger = Logger.getLogger(SudokuController.class.getName());
+    private static int score = 10000;
 
     public SudokuController(SudokuApplication mainApp) {
         this.mainApp = mainApp;
@@ -141,7 +149,7 @@ public class SudokuController {
     }
 
     private void fillRandom() {
-        randomInput = true; // avoid changin the correct or wrong flag when the numbers are not input by the user
+        randomInput = true; // avoid changing the correct or wrong flag when the numbers are not input by the user
 
         Random random = new Random();
 
@@ -165,7 +173,9 @@ public class SudokuController {
 
     @FXML
     public void initialize() {
-        label.setText("");
+        CorrectFalse.setText("");
+        wrongMovesLabel.setText("");
+        clearGrid();
         for (int row = 0; row < 9; row++)
             for (int col = 0; col < 9; col++) {
                 TextField cell = (TextField) getNodeByRowColumnIndex(row, col, sudokuGrid);
@@ -173,42 +183,71 @@ public class SudokuController {
 
                 int finalRow = row;
                 int finalCol = col;
+
+                cell.setTextFormatter(new TextFormatter<>(new IntegerStringConverter(), null, change -> {
+                    String newText = change.getControlNewText();
+                    if (newText.isEmpty())
+                        return change;
+                    if (newText.matches("[1-9]")) {
+                        if (newText.length() > 1)
+                            return null;
+                        return change;
+                    }
+                    return null;
+                }));
                 cell.textProperty().addListener((observable, oldValue, newValue) -> {
-                    System.out.println("Cell [" + finalRow + "][" + finalCol + "] changed from " + oldValue + " to " + newValue);
 
                     if (newValue.matches("[1-9]")) {
 
-                        int inputValue = Integer.parseInt(newValue);
-                        boolean isBlockCorrectBoolean = isBlockCorrect(finalRow, finalCol, inputValue);
-                        System.out.println("isBlockCorrect: " + isBlockCorrectBoolean);
-                        boolean isRowColCorrectBoolean = isRowColCorrect(finalRow, finalCol, inputValue);
-                        System.out.println("isRowColCorrect " + isRowColCorrectBoolean);
+                        cell.getStyleClass().remove("wrong-input");
 
-                        if (!randomInput) {
-                            if (isBlockCorrectBoolean && isRowColCorrectBoolean)
-                                label.setText("Correct!");
-                            else {
-                                label.setText("Wrong!");
-                                wrongMove++;
+                        int inputValue = Integer.parseInt(newValue);
+
+                        if (!randomInput)
+                            if (isBlockCorrect(finalRow, finalCol, inputValue) && isRowColCorrect(finalRow, finalCol, inputValue)) {
+                                CorrectFalse.setText("Correct!");
+                                cell.getStyleClass().remove("wrong-input");
+                            } else {
+                                CorrectFalse.setText("Wrong!");
+                                cell.getStyleClass().add("wrong-input");
+                                wrongMovesCounter++;
+                                wrongMovesLabel.setText(String.valueOf(wrongMovesCounter));
                             }
-                        }
-                    } else if (newValue.isEmpty())
+                    } else if (newValue.isEmpty()) {
                         System.out.println("Cell cleared.");
-                    else {
+                        cell.getStyleClass().remove("wrong-input");
+                    } else {
                         cell.setText(oldValue);
                         System.out.println("Invalid input. Please enter a single digit from 1-9.");
+                        cell.getStyleClass().add("wrong-input");
                     }
                 });
             }
         fillRandom();
     }
 
+    private void clearGrid() {
+        try {
+            for (int r = 0; r < 9; r++)
+                for (int c = 0; c < 9; c++) {
+                    cells[r][c].setText("");
+                    cells[r][c].setEditable(true);
+                }
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Null cell found.");
+        }
+    }
+
     @FXML
     private void goToIndexButton() {
-
+        mainApp.showIndexPage();
     }
 
     public void setRandomNumbersAmount(int randomNumbersAmount) {
         this.RandomNumbersAmount = randomNumbersAmount;
+    }
+
+    public void setMainApp(SudokuApplication mainApp) {
+        this.mainApp = mainApp;
     }
 }
