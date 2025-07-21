@@ -3,15 +3,13 @@ package org.example.sudoku;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.IndexedCell;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.kordamp.bootstrapfx.BootstrapFX;
 
 public class SudokuApplication extends Application {
     private static final Logger logger = Logger.getLogger(SudokuApplication.class.getName());
@@ -31,7 +29,7 @@ public class SudokuApplication extends Application {
     private void loadCommonResources() {
         try (java.io.InputStream fontStream = getClass().getResourceAsStream("/fonts/Roboto-Regular.ttf")) {
             if (fontStream == null)
-                System.err.println("Resource /fonts/Roboto-Regular.ttf not found in classpath");
+                System.err.println("resources/fonts/Roboto-Regular.ttf not found in classpath");
             else
                 Font.loadFont(fontStream, 14);
 
@@ -44,7 +42,7 @@ public class SudokuApplication extends Application {
             if (cssUrl != null)
                 this.commonCssUrl = cssUrl.toExternalForm();
             else {
-                System.err.println("sudoku.css resource not found. Make sure it's in the correct path.");
+                System.err.println("Sudoku.css resource not found. Make sure it's in the correct path.");
                 this.commonCssUrl = null;
             }
         } catch (Exception e) {
@@ -67,23 +65,19 @@ public class SudokuApplication extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Failed ot load index-view.fxml.", e);
+            logger.log(Level.WARNING, "Failed to load index-view.fxml.", e);
         }
     }
 
     public void showSudokuGame(int randomNumbersAmount) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(SudokuApplication.class.getResource("sudoku-view.fxml"));
+            SudokuController sudokuController = new SudokuController(this);
+            fxmlLoader.setController(sudokuController);
+            sudokuController.setRandomNumbersAmount(randomNumbersAmount);
+
             Scene scene = new Scene(fxmlLoader.load(), 400, 450);
             scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
-
-            SudokuController sudokuController = fxmlLoader.getController();
-            if (sudokuController != null) {
-                sudokuController.setMainApp(this);
-                sudokuController.setRandomNumbersAmount(randomNumbersAmount);
-                sudokuController.initialize();
-            } else
-                logger.log(Level.SEVERE, "SudokuController not found after FXML load.");
 
             if (commonCssUrl != null)
                 scene.getStylesheets().add(commonCssUrl);
